@@ -1,7 +1,7 @@
-import akatsukiGif from "@/images/akatsuki.gif";
-import konohaGif from "@/images/konohagif.gif";
-import shinobiGif from "@/images/shinobigif.gif";
-import outrosGif from "@/images/outrosgif.gif";
+import akatsukiGif from "@/images/TelaInicial/akatsuki.gif";
+import konohaGif from "@/images/TelaInicial/konohagif.gif";
+import shinobiGif from "@/images/TelaInicial/shinobigif.gif";
+import outrosGif from "@/images/TelaInicial/outrosgif.gif";
 
 export const organizations = [
   {

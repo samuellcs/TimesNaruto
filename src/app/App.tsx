@@ -1,13 +1,16 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Navigation } from "@/app/components/Navigation";
-import { OrganizationCard } from "@/app/components/OrganizationCard";
+import { OrganizationsContainer } from "@/app/components/OrganizationsContainer";
 import { TeamCard } from "@/app/components/TeamCard";
 import { CharacterCard } from "@/app/components/CharacterCard";
 import { Button } from "@/app/components/Button";
+import { StoryCard } from "@/app/components/StoryCard";
 import { organizations } from "@/app/data/organizations";
 import { teams } from "@/app/data/teams";
-import valedofimGif from "@/images/valedofim.gif";
+import { konohaStory } from "@/app/data/konohaStory";
+import valedofimGif from "@/images/TelaInicial/valedofim.gif";
+import konohaGif from "@/images/TelaInicial/konohagif.gif";
+import time7Gif from "@/images/Konoha/Time7gif.gif";
 
 type View = 'hub' | 'organization';
 
@@ -16,8 +19,9 @@ export default function App() {
   const [selectedOrg, setSelectedOrg] = useState<string | null>(null);
   const [backgroundImage, setBackgroundImage] = useState<string>('');
   const [highlightedTeam, setHighlightedTeam] = useState<number | null>(null);
-  const [scrollY, setScrollY] = useState<number>(0);
+  const [selectedTeam, setSelectedTeam] = useState<number | null>(null);
   const [imagePosition, setImagePosition] = useState<number>(0);
+  const [teamHoverBackground, setTeamHoverBackground] = useState<string>('');
   
   const teamRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
 
@@ -37,31 +41,67 @@ export default function App() {
   };
 
   const handleTeamClick = (teamNumber: number) => {
-    const element = teamRefs.current[teamNumber];
-    if (element) {
-      const offset = 120;
-      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-      const offsetPosition = elementPosition - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
-
-      // Highlight effect
-      setHighlightedTeam(teamNumber);
-      setTimeout(() => setHighlightedTeam(null), 2000);
+    // Marcar time como selecionado primeiro
+    setSelectedTeam(teamNumber);
+    
+    // Se for Time 7, definir o background
+    if (teamNumber === 7 && currentOrg?.id === 'konoha') {
+      setTeamHoverBackground(time7Gif);
     }
+    
+    // Highlight effect
+    setHighlightedTeam(teamNumber);
+    setTimeout(() => setHighlightedTeam(null), 2000);
+    
+    // Aguardar um pouco para o DOM atualizar e então fazer scroll
+    setTimeout(() => {
+      const element = teamRefs.current[teamNumber];
+      if (element) {
+        const offset = 120;
+        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+        const offsetPosition = elementPosition - offset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      } else {
+        // Se não encontrou, tentar novamente após mais tempo
+        setTimeout(() => {
+          const retryElement = teamRefs.current[teamNumber];
+          if (retryElement) {
+            const offset = 120;
+            const elementPosition = retryElement.getBoundingClientRect().top + window.pageYOffset;
+            const offsetPosition = elementPosition - offset;
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            });
+          }
+        }, 200);
+      }
+    }, 150);
   };
 
   const currentOrg = organizations.find(org => org.id === selectedOrg);
-  const currentTeams = selectedOrg ? teams[selectedOrg as keyof typeof teams] || [] : [];
+  const allTeams = selectedOrg ? teams[selectedOrg as keyof typeof teams] || [] : [];
+  // Filtrar apenas Time 7 por enquanto
+  const currentTeams = allTeams.filter(team => team.teamNumber === 7);
 
   useEffect(() => {
     if (currentView === 'hub') {
       setSelectedOrg(null);
+      setSelectedTeam(null);
+      setTeamHoverBackground('');
     }
   }, [currentView]);
+
+  // Manter time7gif quando Time 7 estiver selecionado
+  useEffect(() => {
+    if (selectedTeam === 7 && currentOrg?.id === 'konoha') {
+      setTeamHoverBackground(time7Gif);
+    }
+  }, [selectedTeam, currentOrg?.id]);
 
   // Scroll effect for background image
   useEffect(() => {
@@ -69,7 +109,6 @@ export default function App() {
       if (currentView !== 'hub' || backgroundImage) return;
       
       const currentScrollY = window.scrollY;
-      setScrollY(currentScrollY);
       
       // Calcula a posição da imagem baseado no scroll
       const windowHeight = window.innerHeight;
@@ -127,9 +166,61 @@ export default function App() {
             <div className="absolute inset-0 bg-gradient-to-b from-[#07080B]/80 via-[#07080B]/70 to-[#07080B]" />
           </div>
         )}
+
+        {/* Time 7 GIF background - hover ou quando selecionado (prioridade) */}
+        <AnimatePresence>
+          {currentView === 'organization' && currentOrg?.id === 'konoha' && (teamHoverBackground || selectedTeam === 7) && (
+            <motion.div
+              key="time7-background"
+              initial={{ opacity: 0, scale: 1 }}
+              animate={{ opacity: 1, scale: 1.05 }}
+              exit={{ opacity: 0, scale: 1 }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
+              className="absolute inset-0 w-full h-full overflow-hidden"
+            >
+              <img 
+                src={time7Gif}
+                alt="Time 7 Background"
+                className="absolute w-full h-full object-cover"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectPosition: 'center center',
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-[#07080B]/80 via-[#07080B]/70 to-[#07080B]" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Konoha GIF background for Konoha organization view (fallback) */}
+        <AnimatePresence>
+          {currentView === 'organization' && currentOrg?.id === 'konoha' && !teamHoverBackground && selectedTeam !== 7 && (
+            <motion.div
+              key="konoha-background"
+              initial={{ opacity: 0, scale: 1 }}
+              animate={{ opacity: 1, scale: 1.05 }}
+              exit={{ opacity: 0, scale: 1 }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
+              className="absolute inset-0 w-full h-full overflow-hidden"
+            >
+              <img 
+                src={konohaGif}
+                alt="Konoha Background"
+                className="absolute w-full h-full object-cover"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectPosition: 'center center',
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-[#07080B]/80 via-[#07080B]/70 to-[#07080B]" />
+            </motion.div>
+          )}
+        </AnimatePresence>
         
         <AnimatePresence>
-          {backgroundImage && (
+          {backgroundImage && currentView === 'hub' && (
             <motion.div
               key={backgroundImage}
               initial={{ opacity: 0, scale: 1 }}
@@ -230,22 +321,12 @@ export default function App() {
                   </p>
                 </motion.div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                  {organizations.map((org, index) => (
-                    <OrganizationCard
-                      key={org.id}
-                      name={org.name}
-                      tagline={org.tagline}
-                      color={org.color}
-                      icon={org.icon}
-                      backgroundImage={org.backgroundImage}
-                      onHover={() => handleOrgHover(org.backgroundImage)}
-                      onLeave={handleOrgLeave}
-                      onClick={() => handleOrgClick(org.id)}
-                      index={index}
-                    />
-                  ))}
-                </div>
+                <OrganizationsContainer
+                  organizations={organizations}
+                  onHover={(image) => handleOrgHover(image)}
+                  onLeave={handleOrgLeave}
+                  onClick={(orgId) => handleOrgClick(orgId)}
+                />
               </section>
             </motion.div>
           )}
@@ -299,9 +380,9 @@ export default function App() {
                   </p>
                 </motion.div>
 
-                {/* Seal decoration */}
+                {/* Seal decoration - mais visível */}
                 <div 
-                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[250px] md:text-[500px] opacity-[0.02] pointer-events-none select-none"
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[250px] md:text-[500px] opacity-[0.08] pointer-events-none select-none"
                   style={{ fontFamily: "'Noto Serif JP', serif", fontWeight: 600 }}
                 >
                   {currentOrg.seal}
@@ -313,7 +394,7 @@ export default function App() {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.4 }}
+                  transition={{ duration: 0.6, delay: currentOrg.id === 'konoha' ? 0.6 : 0.4 }}
                   className="mb-16"
                 >
                   <h2 
@@ -329,29 +410,42 @@ export default function App() {
 
                 <div className="space-y-6 max-w-5xl">
                   {currentTeams.map((team, index) => (
-                    <TeamCard
+                    <div
                       key={team.teamNumber}
-                      teamNumber={team.teamNumber}
-                      teamName={team.teamName}
-                      members={team.members}
-                      color={currentOrg.color}
-                      onClick={() => handleTeamClick(team.teamNumber)}
-                      index={index}
-                    />
+                      onMouseEnter={() => {
+                        if (team.teamNumber === 7 && currentOrg.id === 'konoha') {
+                          setTeamHoverBackground(time7Gif);
+                        }
+                      }}
+                      onMouseLeave={() => {
+                        // Só remove o hover background se o time não estiver selecionado
+                        if (selectedTeam !== 7) {
+                          setTeamHoverBackground('');
+                        }
+                      }}
+                    >
+                      <TeamCard
+                        teamNumber={team.teamNumber}
+                        teamName={team.teamName}
+                        members={team.members}
+                        color={currentOrg.color}
+                        onClick={() => handleTeamClick(team.teamNumber)}
+                        index={index}
+                      />
+                    </div>
                   ))}
                 </div>
               </section>
 
-              {/* Team Chapters (Storytelling) */}
-              {currentTeams.map((team, teamIndex) => (
+              {/* Story Cards Section - aparece quando Time 7 é selecionado */}
+              {currentOrg.id === 'konoha' && selectedTeam === 7 && (
                 <section
-                  key={team.teamNumber}
-                  ref={(el: HTMLDivElement | null) => { teamRefs.current[team.teamNumber] = el; }}
+                  ref={(el: HTMLDivElement | null) => { teamRefs.current[7] = el; }}
                   className="min-h-screen px-6 md:px-20 py-20 md:py-32 relative"
                 >
                   {/* Highlight glow effect */}
                   <AnimatePresence>
-                    {highlightedTeam === team.teamNumber && (
+                    {highlightedTeam === 7 && (
                       <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -365,63 +459,15 @@ export default function App() {
                     )}
                   </AnimatePresence>
 
-                  <motion.div
-                    initial={{ opacity: 0, y: 40 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-200px" }}
-                    transition={{ duration: 0.8 }}
-                    className="mb-12 md:mb-20"
-                  >
-                    <div 
-                      className="text-xs md:text-sm tracking-[0.3em] uppercase mb-3 md:mb-4 opacity-60"
-                      style={{ color: currentOrg.color }}
-                    >
-                      Capítulo {String(teamIndex + 1).padStart(2, '0')}
-                    </div>
-                    
-                    <h2 
-                      className="text-3xl md:text-6xl mb-4 md:mb-6 tracking-tight max-w-4xl"
-                      style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700 }}
-                    >
-                      {team.teamName}
-                    </h2>
-
-                    {/* Decorative line */}
-                    <div className="relative h-0.5 md:h-1 w-24 md:w-32 mt-6 md:mt-8">
-                      <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent rounded-full" />
-                      <motion.div
-                        className="absolute inset-0 rounded-full"
-                        style={{ background: `linear-gradient(90deg, ${currentOrg.color}, transparent)` }}
-                        initial={{ scaleX: 0 }}
-                        whileInView={{ scaleX: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 1, delay: 0.3 }}
-                      />
-                    </div>
-                  </motion.div>
-
-                  {/* Characters */}
                   <div className="space-y-8 md:space-y-12">
-                    {team.characters.map((character, charIndex) => (
-                      <CharacterCard
-                        key={character.name}
-                        {...character}
-                        color={currentOrg.color}
-                        index={charIndex}
-                      />
-                    ))}
+                    {konohaStory
+                      .filter(story => story.team === "Time 7")
+                      .map((story, index) => (
+                        <StoryCard key={story.id} story={story} index={index} />
+                      ))}
                   </div>
-
-                  {/* Section separator */}
-                  <motion.div
-                    initial={{ opacity: 0, scaleX: 0 }}
-                    whileInView={{ opacity: 1, scaleX: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1.2, delay: 0.5 }}
-                    className="mt-32 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"
-                  />
                 </section>
-              ))}
+              )}
 
               {/* Footer CTA */}
               <section className="px-6 md:px-20 py-20 md:py-40 text-center">

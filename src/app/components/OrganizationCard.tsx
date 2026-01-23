@@ -35,7 +35,7 @@ export function OrganizationCard({
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
       onClick={onClick}
-      className="group relative cursor-pointer h-[400px] md:h-[520px] rounded-2xl md:rounded-3xl overflow-hidden"
+      className="group relative cursor-pointer h-[280px] md:h-[360px] rounded-2xl md:rounded-3xl overflow-hidden"
     >
       {/* Glass background */}
       <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl md:rounded-3xl transition-all duration-700 group-hover:bg-white/10 group-hover:border-white/20" />
@@ -49,24 +49,24 @@ export function OrganizationCard({
       />
       
       {/* Content */}
-      <div className="relative h-full p-6 md:p-12 flex flex-col justify-between">
+      <div className="relative h-full p-5 md:p-8 flex flex-col justify-between">
         {/* Text */}
         <div>
           <motion.div
-            className="mb-3 md:mb-4 text-xs md:text-sm tracking-[0.2em] uppercase opacity-60"
+            className="mb-2 md:mb-3 text-xs md:text-sm tracking-[0.2em] uppercase opacity-60"
             style={{ color }}
           >
             Organização
           </motion.div>
           
           <h3 
-            className="text-3xl md:text-5xl mb-2 md:mb-3 tracking-tight"
+            className="text-2xl md:text-4xl mb-2 md:mb-3 tracking-tight"
             style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700 }}
           >
             {name}
           </h3>
           
-          <p className="text-base md:text-lg opacity-60 leading-relaxed max-w-xs">
+          <p className="text-sm md:text-base opacity-60 leading-relaxed max-w-xs">
             {tagline}
           </p>
           
@@ -87,7 +87,7 @@ export function OrganizationCard({
 
       {/* Decorative kanji */}
       <div 
-        className="absolute top-6 md:top-8 right-6 md:right-8 text-[80px] md:text-[120px] opacity-[0.03] pointer-events-none"
+        className="absolute top-5 md:top-6 right-5 md:right-6 text-[60px] md:text-[90px] opacity-[0.03] pointer-events-none"
         style={{ fontFamily: "'Noto Serif JP', serif", fontWeight: 600 }}
       >
         忍

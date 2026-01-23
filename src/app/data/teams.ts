@@ -3,8 +3,22 @@ export const teams = {
     {
       teamNumber: 7,
       teamName: 'Time 7 — Laços e Rivalidade',
-      members: ['Naruto', 'Sasuke', 'Sakura'],
+      members: ['Kakashi', 'Naruto', 'Sasuke', 'Sakura'],
       characters: [
+        {
+          name: 'Kakashi Hatake',
+          image: 'https://images.unsplash.com/photo-1723653281310-5a14b70e4cc3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxuaW5qYSUyMHdhcnJpb3IlMjBwb3J0cmFpdHxlbnwxfHx8fDE3NjkwOTE0NTN8MA&ixlib=rb-4.1.0&q=80&w=1080',
+          tags: ['Liderança', 'Tradição'],
+          story: 'O Copy Ninja de Konoha, mestre do Time 7. Sua experiência e técnicas únicas o tornam um dos ninjas mais respeitados.',
+          footballTeam: 'Manchester United',
+          reason: 'Kakashi e o Manchester United compartilham a tradição de grandes líderes e momentos históricos inesquecíveis. O Copy Ninja e o Theatre of Dreams — ambos lugares onde lendas são forjadas.',
+          personality: {
+            courage: 95,
+            loyalty: 92,
+            strategy: 98,
+            determination: 90
+          }
+        },
         {
           name: 'Naruto Uzumaki',
           image: 'https://images.unsplash.com/photo-1723653281310-5a14b70e4cc3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxuaW5qYSUyMHdhcnJpb3IlMjBwb3J0cmFpdHxlbnwxfHx8fDE3NjkwOTE0NTN8MA&ixlib=rb-4.1.0&q=80&w=1080',
