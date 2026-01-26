@@ -3,9 +3,10 @@ import { CharacterPanel } from "./CharacterPanel";
 import { ScrollParchment } from "./ScrollParchment";
 import { useScrollReveal } from "@/app/hooks/useScrollReveal";
 import { KonohaStoryItem } from "@/app/data/konohaStory";
+import { AkatsukiStoryItem } from "@/app/data/akatsukiStory";
 
 interface StoryCardProps {
-  story: KonohaStoryItem;
+  story: KonohaStoryItem | (AkatsukiStoryItem & { team?: string });
   index: number;
 }
 
