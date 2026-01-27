@@ -2,16 +2,19 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { OrganizationsContainer } from "@/app/components/OrganizationsContainer";
 import { TeamCard } from "@/app/components/TeamCard";
-import { CharacterCard } from "@/app/components/CharacterCard";
 import { Button } from "@/app/components/Button";
 import { StoryCard } from "@/app/components/StoryCard";
 import { organizations } from "@/app/data/organizations";
 import { teams } from "@/app/data/teams";
 import { konohaStory } from "@/app/data/konohaStory";
 import { akatsukiStory } from "@/app/data/akatsukiStory";
+import { allianceStory } from "@/app/data/allianceStory";
+import { outrosStory } from "@/app/data/outrosStory";
 import valedofimGif from "@/images/TelaInicial/valedofim.gif";
 import konohaGif from "@/images/TelaInicial/konohagif.gif";
 import akatsukiGif from "@/images/TelaInicial/akatsuki.gif";
+import shinobiGif from "@/images/TelaInicial/shinobigif.gif";
+import outrosGif from "@/images/TelaInicial/outrosgif.gif";
 import time7Gif from "@/images/Konoha/Time7gif.gif";
 
 type View = 'hub' | 'organization';
@@ -248,6 +251,58 @@ export default function App() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Aliança Shinobi GIF background for Alliance organization view */}
+        <AnimatePresence>
+          {currentView === 'organization' && currentOrg?.id === 'alliance' && (
+            <motion.div
+              key="alliance-background"
+              initial={{ opacity: 0, scale: 1 }}
+              animate={{ opacity: 1, scale: 1.05 }}
+              exit={{ opacity: 0, scale: 1 }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
+              className="absolute inset-0 w-full h-full overflow-hidden"
+            >
+              <img
+                src={shinobiGif}
+                alt="Aliança Shinobi Background"
+                className="absolute w-full h-full object-cover"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectPosition: 'center center',
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-[#07080B]/80 via-[#07080B]/70 to-[#07080B]" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Outros GIF background for Outros organization view */}
+        <AnimatePresence>
+          {currentView === 'organization' && currentOrg?.id === 'sound' && (
+            <motion.div
+              key="outros-background"
+              initial={{ opacity: 0, scale: 1 }}
+              animate={{ opacity: 1, scale: 1.05 }}
+              exit={{ opacity: 0, scale: 1 }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
+              className="absolute inset-0 w-full h-full overflow-hidden"
+            >
+              <img
+                src={outrosGif}
+                alt="Outros Background"
+                className="absolute w-full h-full object-cover"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectPosition: 'center center',
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-[#07080B]/80 via-[#07080B]/70 to-[#07080B]" />
+            </motion.div>
+          )}
+        </AnimatePresence>
         
         <AnimatePresence>
           {backgroundImage && currentView === 'hub' && (
@@ -419,8 +474,8 @@ export default function App() {
                 </div>
               </section>
 
-              {/* Teams Selection - apenas para organizações que não sejam Akatsuki */}
-              {currentOrg.id !== 'akatsuki' && (
+              {/* Teams Selection - apenas para organizações que usam menu de times */}
+              {currentOrg.id !== 'akatsuki' && currentOrg.id !== 'alliance' && currentOrg.id !== 'sound' && (
                 <section className="min-h-screen px-6 md:px-20 py-20 md:py-32">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -477,20 +532,35 @@ export default function App() {
                 >
                   <div className="space-y-8 md:space-y-12">
                     {akatsukiStory.map((story, index) => (
-                      <StoryCard 
-                        key={story.id} 
-                        story={{
-                          id: story.id,
-                          name: story.name,
-                          clan: story.clan,
-                          team: "Time 7" as any, // Tipo compatível para StoryCard
-                          image: story.image,
-                          quoteTitle: story.quoteTitle,
-                          story: story.story,
-                          tags: story.tags
-                        }} 
-                        index={index} 
-                      />
+                      <StoryCard key={story.id} story={story} index={index} />
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* Story Cards Section - Aliança Shinobi (direto, sem seleção de time) */}
+              {currentOrg.id === 'alliance' && (
+                <section
+                  className="min-h-screen px-6 md:px-20 py-20 md:py-32 relative"
+                  style={{ paddingTop: '28vh' }}
+                >
+                  <div className="space-y-8 md:space-y-12">
+                    {allianceStory.map((story, index) => (
+                      <StoryCard key={story.id} story={story} index={index} />
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* Story Cards Section - Outros (direto, sem seleção de time) */}
+              {currentOrg.id === 'sound' && (
+                <section
+                  className="min-h-screen px-6 md:px-20 py-20 md:py-32 relative"
+                  style={{ paddingTop: '28vh' }}
+                >
+                  <div className="space-y-8 md:space-y-12">
+                    {outrosStory.map((story, index) => (
+                      <StoryCard key={story.id} story={story} index={index} />
                     ))}
                   </div>
                 </section>

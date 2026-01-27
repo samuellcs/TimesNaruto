@@ -8,7 +8,19 @@ export interface AkatsukiStoryItem {
   tags: string[];
 }
 
+import itachiImg from "@/images/Akatsuki/Itachi.png";
+
 export const akatsukiStory: AkatsukiStoryItem[] = [
+  {
+    id: "itachi",
+    name: "Itachi Uchiha",
+    clan: "Uchiha",
+    image: itachiImg,
+    quoteTitle: "Por que não gosta de futebol?",
+    story:
+      "Ele prefere o silêncio, a estratégia e as partidas longas da madrugada com os parceiros no CS.\n\nEnquanto o mundo corre atrás de rivalidades esportivas, Itachi escolhe a calma do seu quarto, fone no ouvido e mente focada porque, pra ele, o verdadeiro jogo é sempre sobre controle, leitura e precisão.",
+    tags: ["Disciplina", "Estratégia", "Controle", "Sacrifício"],
+  },
   {
     id: "deidara",
     name: "Deidara",

@@ -2,11 +2,19 @@ import { motion } from "motion/react";
 import { CharacterPanel } from "./CharacterPanel";
 import { ScrollParchment } from "./ScrollParchment";
 import { useScrollReveal } from "@/app/hooks/useScrollReveal";
-import { KonohaStoryItem } from "@/app/data/konohaStory";
-import { AkatsukiStoryItem } from "@/app/data/akatsukiStory";
+
+export interface StoryCardData {
+  id: string;
+  name: string;
+  clan: string;
+  image: string;
+  quoteTitle: string;
+  story: string;
+  tags: string[];
+}
 
 interface StoryCardProps {
-  story: KonohaStoryItem | (AkatsukiStoryItem & { team?: string });
+  story: StoryCardData;
   index: number;
 }
 
