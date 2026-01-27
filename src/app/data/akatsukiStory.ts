@@ -9,8 +9,19 @@ export interface AkatsukiStoryItem {
 }
 
 import itachiImg from "@/images/Akatsuki/Itachi.png";
+import yahikoKonanImg from "@/images/Outros/Yahikonan.png";
 
 export const akatsukiStory: AkatsukiStoryItem[] = [
+  {
+    id: "yahiko-konan",
+    name: "Yahiko e Konan",
+    clan: "Amegakure (Ame)",
+    image: yahikoKonanImg,
+    quoteTitle: "Por que torcem pro São Paulo?",
+    story:
+      "Yahiko sempre teve alma tricolor, amava muito o time e ainda participava da Torcida Independente.\n\nAcreditava em mudanças, diálogo e união torcia pelo São Paulo do jeito que lutava pelo mundo: tentando resolver tudo de forma pacífica e estratégica.\n\nInfelizmente, sua história terminou cedo demais, em meio a um conflito de torcida organizada que saiu do controle.\n\nKonan nunca foi de futebol… até perder quem mais amava.\n\nDepois da morte de Yahiko, passou a torcer pelo São Paulo como uma forma de manter viva a memória dele.\n\nPara ela, não é só um time é uma lembrança, um vínculo, um pedaço do passado que ainda pulsa no coração.",
+    tags: ["Origem", "Esperança", "Lealdade", "Resiliência"],
+  },
   {
     id: "itachi",
     name: "Itachi Uchiha",
@@ -21,22 +32,5 @@ export const akatsukiStory: AkatsukiStoryItem[] = [
       "Ele prefere o silêncio, a estratégia e as partidas longas da madrugada com os parceiros no CS.\n\nEnquanto o mundo corre atrás de rivalidades esportivas, Itachi escolhe a calma do seu quarto, fone no ouvido e mente focada porque, pra ele, o verdadeiro jogo é sempre sobre controle, leitura e precisão.",
     tags: ["Disciplina", "Estratégia", "Controle", "Sacrifício"],
   },
-  {
-    id: "deidara",
-    name: "Deidara",
-    clan: "Iwagakure",
-    image: "https://images.unsplash.com/photo-1659225260593-f082454ca503?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-    quoteTitle: "Por que torce pro PSG?",
-    story: "O PSG é puro espetáculo e explosão criativa — como as bombas de argila de Deidara. Um show de habilidades individuais, jogadas inesquecíveis e momentos que explodem a torcida. Arte em campo. Deidara vê beleza na destruição momentânea, e o PSG transforma cada jogo em uma obra-prima efêmera.",
-    tags: ["Explosão", "Arte", "Espectáculo"]
-  },
-  {
-    id: "sasori",
-    name: "Sasori",
-    clan: "Sunagakure",
-    image: "https://images.unsplash.com/photo-1723653281310-5a14b70e4cc3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-    quoteTitle: "Por que torce pro AC Milan?",
-    story: "O Milan histórico é sobre legado eterno. Sasori torceria para um time que transcende gerações, onde lendas nunca morrem e a tradição é preservada como arte. Assim como ele transformou seu próprio corpo em marionete eterna, o Milan preserva sua grandeza através dos tempos.",
-    tags: ["Eternidade", "Tradição", "Legado"]
-  }
+
 ];
