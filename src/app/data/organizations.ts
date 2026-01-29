@@ -37,7 +37,7 @@ export const organizations = [
   {
     id: 'sound',
     name: 'Outros',
-    tagline: 'Outros ninjas que não fazem parte de nenhuma organização',
+    tagline: 'Onde se encaixam os que não se encaixam',
     color: '#A855F7',
     backgroundImage: outrosGif,
     icon: '♪',

@@ -1,17 +1,14 @@
 import { motion } from "motion/react";
-import { ReactNode } from "react";
 
 interface ScrollParchmentProps {
   title: string;
   story: string;
-  tags: string[];
   isVisible: boolean;
 }
 
 export function ScrollParchment({
   title,
   story,
-  tags,
   isVisible,
 }: ScrollParchmentProps) {
   return (

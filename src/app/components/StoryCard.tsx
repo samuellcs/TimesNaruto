@@ -10,7 +10,6 @@ export interface StoryCardData {
   image: string;
   quoteTitle: string;
   story: string;
-  tags: string[];
 }
 
 interface StoryCardProps {
@@ -46,7 +45,6 @@ export function StoryCard({ story, index }: StoryCardProps) {
         <ScrollParchment
           title={story.quoteTitle}
           story={story.story}
-          tags={story.tags}
           isVisible={isVisible}
         />
       </div>
