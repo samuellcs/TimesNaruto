@@ -6,10 +6,12 @@ interface TeamCardProps {
   members: string[];
   color: string;
   onClick: () => void;
+  onHover?: () => void;
+  onLeave?: () => void;
   index: number;
 }
 
-export function TeamCard({ teamNumber, teamName, members, color, onClick, index }: TeamCardProps) {
+export function TeamCard({ teamNumber, teamName, members, color, onClick, onHover, onLeave, index }: TeamCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, x: -30 }}
@@ -20,6 +22,8 @@ export function TeamCard({ teamNumber, teamName, members, color, onClick, index 
         ease: [0.19, 1.0, 0.22, 1.0]
       }}
       onClick={onClick}
+      onMouseEnter={onHover}
+      onMouseLeave={onLeave}
       className="group relative cursor-pointer"
     >
       {/* Card */}

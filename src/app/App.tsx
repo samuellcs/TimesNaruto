@@ -3,8 +3,9 @@ import { motion, AnimatePresence } from "motion/react";
 import { OrganizationsContainer } from "@/app/components/OrganizationsContainer";
 import { Button } from "@/app/components/Button";
 import { StoryCard } from "@/app/components/StoryCard";
+import { TeamCard } from "@/app/components/TeamCard";
 import { organizations } from "@/app/data/organizations";
-import { konohaStory } from "@/app/data/konohaStory";
+import { konohaStory, type TeamType } from "@/app/data/konohaStory";
 import { akatsukiStory } from "@/app/data/akatsukiStory";
 import { allianceStory } from "@/app/data/allianceStory";
 import { outrosStory } from "@/app/data/outrosStory";
@@ -13,14 +14,42 @@ import konohaGif from "@/images/TelaInicial/konohagif.gif";
 import akatsukiGif from "@/images/TelaInicial/akatsuki.gif";
 import shinobiGif from "@/images/TelaInicial/shinobigif.gif";
 import outrosGif from "@/images/TelaInicial/outrosgif.gif";
+import time7Gif from "@/images/Konoha/Time7gif.gif";
+import time8Gif from "@/images/Konoha/time8gif.gif";
+import time10Gif from "@/images/Konoha/time10gif.gif";
 
 type View = 'hub' | 'organization';
 
 export default function App() {
   const [currentView, setCurrentView] = useState<View>('hub');
   const [selectedOrg, setSelectedOrg] = useState<string | null>(null);
+  const [selectedKonohaTeam, setSelectedKonohaTeam] = useState<TeamType | null>(null);
+  const [teamHoverImage, setTeamHoverImage] = useState<string | null>(null);
   const [backgroundImage, setBackgroundImage] = useState<string>('');
   const [imagePosition, setImagePosition] = useState<number>(0);
+
+  // GIF de hover por time (Konoha - tela de escolha de time)
+  const konohaTeamHoverImages: Partial<Record<TeamType, string>> = {
+    "Time 7": time7Gif,
+    "Time 8": time8Gif,
+    "Time 10": time10Gif,
+  };
+  // GIF de fundo quando um time está selecionado (tela do time)
+  const konohaTeamBackgroundImages: Partial<Record<TeamType, string>> = {
+    "Time 7": time7Gif,
+    "Time 8": time8Gif,
+    "Time 10": time10Gif,
+  };
+
+  // Times de Konoha derivados dos dados (apenas times com pelo menos um membro)
+  const konohaTeams = konohaStory
+    .reduce<{ team: TeamType; number: number; members: string[] }[]>((acc, item) => {
+      const existing = acc.find((t) => t.team === item.team);
+      if (existing) existing.members.push(item.name);
+      else acc.push({ team: item.team, number: parseInt(item.team.replace("Time ", ""), 10), members: [item.name] });
+      return acc;
+    }, [])
+    .sort((a, b) => a.number - b.number);
 
   const handleOrgHover = (image: string) => {
     setBackgroundImage(image);
@@ -42,8 +71,16 @@ export default function App() {
   useEffect(() => {
     if (currentView === 'hub') {
       setSelectedOrg(null);
+      setSelectedKonohaTeam(null);
     }
   }, [currentView]);
+
+  useEffect(() => {
+    if (selectedOrg !== 'konoha') {
+      setSelectedKonohaTeam(null);
+      setTeamHoverImage(null);
+    }
+  }, [selectedOrg]);
 
   // Scroll effect for background image
   useEffect(() => {
@@ -109,11 +146,11 @@ export default function App() {
           </div>
         )}
 
-        {/* Konoha GIF background for Konoha organization view */}
+        {/* Konoha GIF background: time específico quando selecionado, senão konoha genérico */}
         <AnimatePresence>
           {currentView === 'organization' && currentOrg?.id === 'konoha' && (
             <motion.div
-              key="konoha-background"
+              key={`konoha-bg-${selectedKonohaTeam ?? 'default'}`}
               initial={{ opacity: 0, scale: 1 }}
               animate={{ opacity: 1, scale: 1.05 }}
               exit={{ opacity: 0, scale: 1 }}
@@ -121,8 +158,12 @@ export default function App() {
               className="absolute inset-0 w-full h-full overflow-hidden"
             >
               <img 
-                src={konohaGif}
-                alt="Konoha Background"
+                src={
+                  selectedKonohaTeam && konohaTeamBackgroundImages[selectedKonohaTeam]
+                    ? konohaTeamBackgroundImages[selectedKonohaTeam]
+                    : konohaGif
+                }
+                alt={selectedKonohaTeam ? `${selectedKonohaTeam} Background` : "Konoha Background"}
                 className="absolute w-full h-full object-cover"
                 style={{
                   width: '100%',
@@ -228,6 +269,32 @@ export default function App() {
                 backgroundPosition: 'center',
               }}
             >
+              <div className="absolute inset-0 bg-gradient-to-b from-[#07080B]/80 via-[#07080B]/70 to-[#07080B]" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Konoha: hover nos times (Time 7 gif, etc.) */}
+        <AnimatePresence>
+          {teamHoverImage && currentView === 'organization' && currentOrg?.id === 'konoha' && !selectedKonohaTeam && (
+            <motion.div
+              key={teamHoverImage}
+              initial={{ opacity: 0, scale: 1 }}
+              animate={{ opacity: 1, scale: 1.05 }}
+              exit={{ opacity: 0, scale: 1 }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
+              className="absolute inset-0 w-full h-full overflow-hidden"
+            >
+              <img
+                src={teamHoverImage}
+                alt=""
+                className="absolute w-full h-full object-cover"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectPosition: 'center center',
+                }}
+              />
               <div className="absolute inset-0 bg-gradient-to-b from-[#07080B]/80 via-[#07080B]/70 to-[#07080B]" />
             </motion.div>
           )}
@@ -425,15 +492,62 @@ export default function App() {
                 </section>
               )}
 
-              {/* Story Cards Section - Konoha */}
-              {currentOrg.id === 'konoha' && (
+              {/* Konoha: tela de escolha de time ou histórias do time selecionado */}
+              {currentOrg.id === 'konoha' && !selectedKonohaTeam && (
                 <section
                   className="min-h-screen px-6 md:px-20 py-20 md:py-32 relative"
                   style={{ paddingTop: '28vh' }}
                 >
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="mb-12"
+                  >
+                    <h2
+                      className="text-3xl md:text-5xl mb-4"
+                      style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700 }}
+                    >
+                      Escolha um time
+                    </h2>
+                    <p className="text-base md:text-lg opacity-60">
+                      Selecione o time para ver as histórias dos personagens
+                    </p>
+                  </motion.div>
+                  <div className="grid gap-4 md:gap-6 sm:grid-cols-1 md:grid-cols-2">
+                    {konohaTeams.map((t, index) => (
+                      <TeamCard
+                        key={t.team}
+                        teamNumber={t.number}
+                        teamName={t.team}
+                        members={t.members}
+                        color={currentOrg.color}
+                        onClick={() => setSelectedKonohaTeam(t.team)}
+                        onHover={() => setTeamHoverImage(konohaTeamHoverImages[t.team] ?? null)}
+                        onLeave={() => setTeamHoverImage(null)}
+                        index={index}
+                      />
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* Konoha: histórias do time selecionado */}
+              {currentOrg.id === 'konoha' && selectedKonohaTeam && (
+                <section
+                  className="min-h-screen px-6 md:px-20 py-20 md:py-32 relative"
+                  style={{ paddingTop: '28vh' }}
+                >
+                  <motion.button
+                    onClick={() => setSelectedKonohaTeam(null)}
+                    className="mb-8 px-4 md:px-6 py-2 md:py-3 rounded-full border border-white/20 hover:bg-white/10 transition-all duration-300 flex items-center gap-2 text-sm md:text-base"
+                    whileHover={{ x: -4 }}
+                  >
+                    ← Voltar aos times
+                  </motion.button>
                   <div className="space-y-8 md:space-y-12">
                     {konohaStory
-                      .filter(story => story.team === "Time 7")
+                      .filter((story) => story.team === selectedKonohaTeam)
                       .map((story, index) => (
                         <StoryCard key={story.id} story={story} index={index} />
                       ))}
