@@ -82,7 +82,7 @@ export const konohaStory: KonohaStoryItem[] = [
     clan: "Hyuuga",
     team: "Time 8",
     image: hinata,
-    quoteTitle: "Por que torce pro time?",
+    quoteTitle: "Por que torce pro Brasil?",
     story: "A Hinata não é muito de acompanhar futebol no dia a dia. Ela só se envolve mais durante os jogos do Brasil na Copa do Mundo, mas não é nem pelo esporte em si é pelos momentos em família. Reservada e carinhosa, ela valoriza acima de tudo estar perto de quem ama. Pra Hinata, o importante não é o placar, é a união, a torcida junto no sofá, as risadas e a energia boa de todo mundo reunido.",
   },
   {
